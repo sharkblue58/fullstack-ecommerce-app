@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Product } from '../../commons/product';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute } from '@angular/router';
+import { CartService } from '../../services/cart.service';
+import { CartItem } from '../../commons/cart-item';
 
 @Component({
   selector: 'app-product-list-gird',
@@ -9,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './product-list-gird.component.css',
 })
 export class ProductListGirdComponent {
+
   products: Product[] = [];
   currentCategoryId: number = 1;
   previousCategoryId: number = 1;
@@ -22,6 +25,7 @@ export class ProductListGirdComponent {
 
   constructor(
     private productService: ProductService,
+    private cartService : CartService,
     private route: ActivatedRoute
   ) {}
 
@@ -104,4 +108,10 @@ export class ProductListGirdComponent {
       this.theTotalElements = data.page.totalElements;
     };
   }
+
+  addToCart(product: Product) {
+       const cartItem =   new CartItem(product);
+       this.cartService.addToCart(cartItem);
+    }
+
 }
