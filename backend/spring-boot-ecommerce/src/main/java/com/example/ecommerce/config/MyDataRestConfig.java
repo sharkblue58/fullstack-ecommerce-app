@@ -15,7 +15,7 @@ import jakarta.persistence.metamodel.EntityType;
 @Configuration
 public class MyDataRestConfig implements RepositoryRestConfigurer {
 
-    @SuppressWarnings("unused")
+    
     private EntityManager entityManager;
 
     public MyDataRestConfig(EntityManager theEntityManager) {
@@ -27,24 +27,23 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
         // array of unsupported actions which should be disabled for all entities
         HttpMethod[] theUnsupportedActions = { HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH };
+        Class<?>[] domains = { Product.class, ProductCategory.class, Country.class, State.class };
 
-        // disable HTTP methods for Product: PUT, POST, DELETE, PATCH
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
-        // disable HTTP methods for ProductCategory: PUT, POST, DELETE, PATCH
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
+        // disable HTTP methods for Country: PUT, POST, DELETE, PATCH
+        disableHttpMethods(config,domains ,theUnsupportedActions);
 
         // call an internal helper method to expose ids
         exposeIds(config);
     }
 
+    private void disableHttpMethods(RepositoryRestConfiguration config,Class<?>[] domains , HttpMethod[] theUnsupportedActions) {
+        for (Class<?> domainClass : domains) {
+            config.getExposureConfiguration()
+                    .forDomainType(domainClass)
+                    .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+                    .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
+        }
+    }
 
     private void exposeIds(RepositoryRestConfiguration config) {
         // expose entity ids 
@@ -64,4 +63,5 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         Class<?>[] domainTypes = entityClasses.toArray(new Class[0]);
         config.exposeIdsFor(domainTypes);
     }
+
 }
