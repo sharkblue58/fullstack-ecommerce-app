@@ -36,7 +36,7 @@ public class Product {
     private BigDecimal unitPrice;
 
     @Column(name = "image_url")
-    private String imgUrl;
+    private String imageUrl;
 
     @Column(name = "active", nullable = false)
     private boolean active;
